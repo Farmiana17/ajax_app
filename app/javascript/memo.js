@@ -1,3 +1,17 @@
+const buildHTML = (XHR) => {
+  const item = XHR.response.post;
+  const html = `
+    <div class="post">
+      <div class="post-date">
+        投稿日時：${item.created_at}
+      </div>
+      <div class="post-content">
+        ${item.content}
+      </div>
+    </div>`;
+  return html;
+};
+
 function post (){
   const submit = document.getElementById("submit");
   //<%= form.submit '投稿する' , id: "submit" %>を取得//
@@ -18,6 +32,28 @@ function post (){
     //responseTypeプロパティにより、レスポンスをJSON形式で返すように指定//
     XHR.send(formData);
     //send()メソッドを使用  *「formData」をサーバーに送信//
+    XHR.onload = () => {
+    //onloadプロパティで、レスポンスの受信をが成功したときの処理を設定//
+      if (XHR.status != 200) {
+        alert(`Error ${XHR.stats}: ${XHR.statusText}`);
+        return null;
+      };
+      const list = document.getElementById("list");
+      const formText = document.getElementById("content");
+      const item = XHR.response.post;
+    //レスポンスの情報のうち、投稿されたメモの情報を取り出し、変数「item」に格納する//
+      const html = `
+        <div class="post">
+          <div class="post-date">
+            投稿日時：${item.created_at}
+          </div>
+          <div class="post-content">
+            ${item.content}
+          </div>
+        </div>`;
+      list.insertAdjacentHTML("afterend", html);
+      formText.value = "";
+    };
   });
 };
 
